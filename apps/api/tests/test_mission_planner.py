@@ -36,3 +36,13 @@ def test_hinglish_grocery_keywords_route_to_grocery_planner() -> None:
 
 def test_general_conversation_does_not_create_a_mission() -> None:
     assert build_mission("Hey Warik, how are you?") is None
+
+
+def test_trip_prompt_creates_an_itinerary_mission() -> None:
+    mission = build_mission("Plan a trip from Bhopal to Goa next weekend")
+
+    assert mission is not None
+    assert mission.intent == "travel_planning"
+    assert mission.missing_information == []
+    assert mission.state == "not_executable"
+    assert any(step.title == "Build the day-by-day plan" for step in mission.steps)
