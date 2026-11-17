@@ -1,5 +1,5 @@
-from app.db import Base
 from app import models  # noqa: F401
+from app.db import Base
 
 
 def test_phase_one_schema_registers_required_tables() -> None:
