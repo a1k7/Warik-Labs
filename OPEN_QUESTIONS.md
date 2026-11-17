@@ -87,3 +87,45 @@ Do not paste secrets into chat. When the new provider configuration is approved,
 ## Approval required
 
 Reply with your decisions and explicitly say **“Approve Phase 1”** when you want the scaffold to begin. Until then, keep the target limited to these Phase 0 documents.
+
+
+---
+
+# Owner selections received — 2026-11-17
+
+The owner's uploaded screenshots show the following selections. These are recorded as decisions, not as permission to start Phase 1.
+
+| Decision | Selected value | State |
+|---|---|---|
+| Canonical legacy reference | `codex/warik-intelligence-workspace-2026-11-16` | Resolved |
+| Deployment target | AWS Mumbai (`ap-south-1`) | Selected; free-account eligibility and available services must be checked |
+| Maximum task cost | ₹0 / free wherever possible | Hard constraint |
+| First action skills | Flight search, grocery ordering (Blinkit/BigBasket), food ordering (Swiggy/Zomato), cab booking (Ola/Uber) | Selected; official API/partner access still unverified |
+| Payment provider | Exclude payments from initial demo | Resolved; no PSP integration in initial demo |
+| Browser sandbox | Local Docker Chromium first | Resolved for development; do not assume it is a production isolation boundary |
+| Initial audience | Broad consumer audience | Selected as positioning; narrow pilot cohort still needs validation |
+
+## Feasibility note: AWS Mumbai with a ₹0 hard budget
+
+AWS currently documents a Free account plan for eligible new customers with up to USD $200 in credits over a period capped at six months; the plan only exposes selected services and ends when the credits are exhausted or the six-month period expires. Existing AWS customers or people who previously had an AWS account may be ineligible. This is a temporary proof-of-concept allowance, not a sustainable ₹0 production hosting commitment. See [AWS Free Tier](https://aws.amazon.com/free/), [AWS Free Tier FAQs](https://aws.amazon.com/free/free-tier-faqs/) and [AWS account plan documentation](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/free-tier-plans.html).
+
+Before committing to AWS, confirm whether the account is eligible for the Free plan and confirm that every required resource/service can be used in `ap-south-1` under that plan. If it is not eligible, keep the first environment local and defer AWS deployment rather than incur charges.
+
+## Remaining confirmations
+
+1. Does the AWS account qualify as a **new-customer Free plan** account? Do not share billing/payment details in chat.
+2. Is a WhatsApp Business Account / Meta developer app already available, or should the first demo use a local WhatsApp webhook simulator until access is configured?
+3. Is the broad audience only a long-term product target, with a small opt-in pilot group for testing? A broad positioning statement is not a substitute for usability validation.
+4. For any of the four selected skills, please confirm whether you already have approved partner/API access. No integration will be assumed available merely because the consumer website/app exists.
+
+## Credentials and API endpoint supplied after the initial audit
+
+- The Render URL supplied is recorded as the old backend's reference endpoint only. A browser-based request to its health path was not accessible in this audit; no uptime or correctness claim is made.
+- Environment values supplied in chat and non-empty values found in the uploaded archive are classified as exposed and must not be reused. See the updated `SECRETS_INVENTORY.md`.
+- No old credential was used to call the Render service or any provider API.
+- Do not attach or paste another unredacted `.env`, token file, connection string or key. A redacted key-name-only export is sufficient for future configuration review.
+
+## Phase 1 gate remains closed
+
+The decisions above resolve the original architecture questions, but they do **not** constitute an explicit implementation approval. Phase 1 remains blocked until you say **“Approve Phase 1”** after addressing the exposed credentials and confirming the AWS account's no-cost eligibility (or choosing local-first).
+
