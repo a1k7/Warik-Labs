@@ -19,10 +19,10 @@ const metrics = [
 ];
 
 const foundations = [
-  { label: "API service", detail: "FastAPI scaffold", state: "Ready", icon: Bot },
-  { label: "Database", detail: "PostgreSQL schema + migrations", state: "Ready", icon: Database },
-  { label: "Queue", detail: "Redis local service", state: "Ready", icon: CircleDashed },
-  { label: "WhatsApp channel", detail: "Cloud API not connected", state: "Not connected", icon: MessageCircle },
+  { label: "API service", detail: "FastAPI route scaffolded", state: "Scaffolded", icon: Bot },
+  { label: "Database", detail: "PostgreSQL schema + migration", state: "Defined", icon: Database },
+  { label: "Queue", detail: "Redis Compose service", state: "Defined", icon: CircleDashed },
+  { label: "WhatsApp channel", detail: "Cloud API not configured", state: "Not connected", icon: MessageCircle },
 ];
 
 export default function HomePage() {
@@ -68,7 +68,7 @@ export default function HomePage() {
             <div className="hero-art"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="orb-core">W</div><div className="orbit-caption">PERSONAL EXECUTION SYSTEM</div></div>
           </div>
 
-          <div className="section-heading"><div><span className="eyebrow">LIVE OPERATIONS</span><h2>Workspace pulse</h2></div><span className="muted">No live activity yet</span></div>
+          <div className="section-heading"><div><span className="eyebrow">MISSION TRACKING</span><h2>Workspace pulse</h2></div><span className="muted">No live activity yet</span></div>
           <div className="metric-grid">
             {metrics.map((metric) => {
               const Icon = metric.icon;
@@ -82,7 +82,7 @@ export default function HomePage() {
               <div className="foundation-list">
                 {foundations.map((item) => {
                   const Icon = item.icon;
-                  const ready = item.state === "Ready";
+                  const ready = item.state === "Connected";
                   return <div className="foundation-row" key={item.label}><div className="foundation-icon"><Icon size={17} /></div><div className="foundation-copy"><strong>{item.label}</strong><small>{item.detail}</small></div><span className={ready ? "state ready" : "state idle"}>{item.state}</span></div>;
                 })}
               </div>
