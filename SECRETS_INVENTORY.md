@@ -143,3 +143,56 @@ The following is the union of settings discovered in the inspected application c
 ## Items not visible through the GitHub repository
 
 The audit cannot see ignored local files on the user's Mac, GitHub Actions secret values, Render/other cloud environment variables, provider dashboards, or production database credentials. These require owner-side inspection. **Do not paste secret values into chat.** A local copy operation can move approved values into a gitignored `.env.local` after the new configuration is finalised.
+
+
+---
+
+# Security addendum — evidence from uploaded local archives and Render production configuration
+
+**Updated:** 2026-11-17  
+**Source material:** user-uploaded `warik-ai.zip`, `warik-ai-safety-backups(2).zip`, Render Production environment screenshot, and environment configuration text supplied in this conversation.
+
+This addendum supersedes any earlier statement that only blank example credentials were observed. The earlier GitHub-only inspection did not include ignored local files; the uploaded ZIP revealed additional material.
+
+## Confirmed exposed configuration
+
+The Render screenshot is the **Production** environment for the old `warik-ai-backend` service. Its masked variable list includes `DATABASE_URL`, `GROQ_API_KEY`, and `JWT_SECRET`. The accompanying text supplied non-empty values for those fields. These must be treated as production credentials, not as harmless free-tier demo values.
+
+The uploaded `warik-ai.zip` also contains:
+
+| Archive path | Non-empty credential-bearing fields found | Assessment |
+|---|---|---|
+| `warik-ai/backend/.env` | `DATABASE_URL` | Non-empty database DSN with embedded authentication. Environment/usage not independently verified. Treat as exposed. |
+| `warik-ai/backend-backup/.env` | `GROQ_API_KEY`, `GNANI_API_KEY`, `GEOAPIFY_API_KEY`, `IGNAV_API_KEY`, `STAYAPI_KEY`, `VISTALINK_API_KEY`, `OLA_MAPS_API_KEY`, `DUFFEL_API_KEY`, `REEFAPI_KEY` | Non-empty values were present in the archive. Active/test/production status is unknown; treat every still-valid credential as compromised and rotate or revoke. |
+| `warik-ai/backend-backup/token.json` | `access_token` (non-empty), `token_type` | Bearer/access-token-shaped material; provider/service could not be established from the inspected archive. Identify the issuing service privately, then revoke it. |
+| `warik-ai/backend-backup-operator-phase1/backend/token.json` (inside nested `warik-ai-backend.zip`) | A `token.json` file is present | The nested copy requires the same private local review and revocation decision. |
+
+The archive also includes a root `.env.example` containing placeholders and a nested `backend.zip` whose `.env` contained only non-secret application metadata. The separate `warik-ai-safety-backups(2).zip` had no files named `.env`, `token.json`, credential JSON or private-key files in its inspected archive listing.
+
+## Rotation priority
+
+| Priority | Credential | Required action |
+|---|---|---|
+| **Immediate** | Render Production `GROQ_API_KEY` and any non-empty Groq key in the backup archive | Revoke the old key(s), create a fresh key in Groq, update Render only after verifying the new key, and check provider usage for unexpected activity. |
+| **Immediate** | Render Production `DATABASE_URL` and archive `backend/.env` database DSN | Rotate the Neon database password/credential, review database activity, update the Render secret, and validate the application using the new connection string. |
+| **Immediate** | Render Production `JWT_SECRET` | Replace with a newly generated high-entropy value. Expect existing JWT sessions to become invalid; require users to authenticate again. |
+| **High** | `GNANI_API_KEY`, `GEOAPIFY_API_KEY`, `IGNAV_API_KEY`, `STAYAPI_KEY`, `VISTALINK_API_KEY`, `OLA_MAPS_API_KEY`, `DUFFEL_API_KEY`, `REEFAPI_KEY` | Identify the issuing account for each; revoke/rotate every key that remains valid. Their test/production status was not established by the archive. |
+| **High** | `access_token` in `token.json` | Identify the issuing integration from the owner's provider account or local source history, revoke the token and any linked refresh/session token. Do not paste it into chat. |
+
+Do not assume a key is safe because it is free, has a limited free quota, or is in an ignored local file. Free-tier credentials can still grant account/API access, consume quota, expose data or be abused.
+
+## Archive and Git-history scan scope
+
+- The uploaded main ZIP contains approximately 102,319 archive entries and includes large dependency folders, nested ZIPs, ignored local files, backups and a local `.git` directory.
+- The scan inspected environment-like files and token filenames without emitting their values. The relevant discovered files are listed above.
+- The packaged local Git metadata exposed 489 reachable Git objects during the limited signature scan. No provider-key signature or non-placeholder dotenv credential was detected in the reachable Git blobs. One database-URL-shaped string was found in a production-database test file and appears to be test fixture material; it was not treated as a live credential.
+- The archive scan is not a forensic guarantee: unreachable Git objects, binary payloads, arbitrary embedded strings, the live provider account state and cloud logs were not exhaustively certified.
+- The Render screenshot showed values masked. Production status and variable names were visible; the values were not extracted from the screenshot. The user-supplied configuration text contained the non-empty values described above.
+
+## New Warik-Labs handling rule
+
+1. Do not copy any values from the old ZIP or conversation into the new repository.
+2. Create new, dedicated development credentials only after the selected provider and sandbox contract are approved.
+3. Store secrets in a local ignored `.env.local` or a cloud secret manager. Never commit them, never place them in `VITE_*` variables, logs, screenshots, task records or model prompts.
+4. Keep old and new environments isolated. Use independent credentials for development, staging and production.
+5. Before any integration test, confirm that the credential is test/sandbox-scoped and that the specific test call is explicitly approved.
