@@ -62,7 +62,9 @@ class Task(Base):
     priority: Mapped[int] = mapped_column(Integer, default=3, nullable=False)
     budget_paise: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     cost_paise: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False
     )
@@ -86,7 +88,9 @@ class Action(Base):
     error_code: Mapped[str | None] = mapped_column(String(80))
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
 
 
 class Approval(Base):
@@ -94,7 +98,9 @@ class Approval(Base):
     __table_args__ = (Index("ix_approvals_status_expiry", "status", "expires_at"),)
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    task_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False)
+    task_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False
+    )
     action_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("actions.id", ondelete="CASCADE"), nullable=False
     )
@@ -104,7 +110,9 @@ class Approval(Base):
     decision_via: Mapped[str | None] = mapped_column(String(24))
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
 
 
 class Memory(Base):
@@ -112,15 +120,21 @@ class Memory(Base):
     __table_args__ = (UniqueConstraint("user_id", "memory_path", name="uq_memories_user_path"),)
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     memory_path: Mapped[str] = mapped_column(String(500), nullable=False)
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     markdown_content: Mapped[str] = mapped_column(Text, default="", nullable=False)
     checksum_sha256: Mapped[str | None] = mapped_column(String(64))
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     sensitivity: Mapped[str] = mapped_column(String(24), default="normal", nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False
+    )
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
@@ -131,14 +145,18 @@ class Integration(Base):
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     provider: Mapped[str] = mapped_column(String(64), nullable=False)
     status: Mapped[str] = mapped_column(String(24), default="disconnected", nullable=False)
     granted_scopes: Mapped[list[str]] = mapped_column(JSONType, default=list, nullable=False)
     credential_ref: Mapped[str | None] = mapped_column(String(240))
     connected_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
 
 
 class LedgerEvent(Base):
@@ -149,7 +167,9 @@ class LedgerEvent(Base):
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     task_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("tasks.id", ondelete="SET NULL"))
     action_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("actions.id", ondelete="SET NULL")
