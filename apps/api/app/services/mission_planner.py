@@ -4,7 +4,7 @@ import uuid
 from app.schemas.companion import MissionPlan, MissionStep
 
 DATE_HINTS = (
-    r"\b(?:today|tomorrow|tonight|this weekend|next week|on monday|on tuesday|on wednesday|"
+    r"\b(?:today|tomorrow|tonight|kal|aaj|parso|this weekend|next weekend|next week|on monday|on tuesday|on wednesday|"
     r"on thursday|on friday|on saturday|on sunday)\b",
     r"\b\d{1,2}[/-]\d{1,2}(?:[/-]\d{2,4})?\b",
 )
@@ -30,6 +30,11 @@ def _extract_missing(text: str, intent: str) -> list[str]:
     elif intent == "cab":
         if not _has(text, "from ") or not _has(text, "to "):
             missing.append("Pickup and drop-off locations")
+    elif intent == "travel_planning":
+        if not re.search(r"\bfrom\s+.+?\s+to\s+", text, re.I):
+            missing.append("Starting city and destination")
+        if not has_date:
+            missing.append("Travel dates or duration")
     elif intent in {"grocery", "food"}:
         if not _has(text, "order ", "get me ", "buy ", "add ") and intent == "grocery":
             missing.append("Items and quantities")
@@ -41,6 +46,8 @@ def _extract_missing(text: str, intent: str) -> list[str]:
 def classify_intent(text: str) -> str:
     if _has(text, "flight", "air ticket", "fly to", "airfare"):
         return "flight_search"
+    if _has(text, "plan a trip", "plan my trip", "travel plan", "itinerary", "holiday", "vacation", "trip from", "travel to"):
+        return "travel_planning"
     if _has(text, "blinkit", "instamart", "bigbasket", "grocery", "groceries", "milk", "vegetables"):
         return "grocery"
     if _has(text, "swiggy", "zomato", "food order", "restaurant order", "dinner order"):
@@ -66,6 +73,7 @@ def build_mission(text: str) -> MissionPlan | None:
     missing = _extract_missing(text, intent)
     titles = {
         "flight_search": "Find the right flight",
+        "travel_planning": "Plan your trip",
         "grocery": "Prepare your grocery order",
         "food": "Find food options",
         "cab": "Plan your cab ride",
@@ -82,6 +90,12 @@ def build_mission(text: str) -> MissionPlan | None:
             ("Understand route", "Extract origin, destination, date and travel constraints.", "ready", "none"),
             ("Check flight options", "Live fare search is not connected in this build.", "blocked", "read_only"),
             ("Compare options", "Compare schedule, total price and baggage once results are available.", "blocked", "read_only"),
+        ]
+    elif intent == "travel_planning":
+        step_specs = [
+            ("Shape the itinerary", "Organise destination, dates, trip pace and budget.", "needs_input" if missing else "ready", "none"),
+            ("Research transport and stays", "Live flight and hotel inventory is not connected in this build.", "blocked", "read_only"),
+            ("Build the day-by-day plan", "Prepare a practical itinerary once the trip constraints are confirmed.", "ready", "none"),
         ]
     elif intent == "grocery":
         step_specs = [
@@ -164,19 +178,19 @@ def local_reply(text: str, mission: MissionPlan | None) -> str:
 
     if mission.missing_information:
         return (
-            f"I've started a plan for **{mission.title.lower()}**. Before I can make it useful, "
+            f"I've started a plan for {mission.title.lower()}. Before I can make it useful, "
             f"I need: {', '.join(mission.missing_information)}. Share those details and I'll refine the plan. "
             "I won't place an order, make a booking or spend money."
         )
 
-    if mission.intent in {"daily_plan", "reminder"}:
+    if mission.intent in {"daily_plan", "reminder", "travel_planning"}:
         return (
             f"I've structured this as **{mission.title.lower()}**. We can work through the details here. "
             "This build can draft and organise the plan, but it does not yet send notifications or change your calendar."
         )
 
     return (
-        f"I've turned that into a mission: **{mission.title}**. The plan is prepared, but the required live "
+        f"I've turned that into a mission: {mission.title}. The plan is prepared, but the required live "
         "provider connection is not available yet. I can help refine the requirements and prepare the next step; "
         "I won't claim a search, order or booking has happened."
     )
