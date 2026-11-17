@@ -1,9 +1,11 @@
 from fastapi.testclient import TestClient
 
+from app.api import companion as companion_api
 from app.main import app
 
 
-def test_chat_endpoint_returns_local_companion_response_without_provider_key() -> None:
+def test_chat_endpoint_returns_local_companion_response_without_provider_key(monkeypatch) -> None:
+    monkeypatch.setattr(companion_api.settings, "groq_api_key", None)
     with TestClient(app) as client:
         response = client.post(
             "/api/v1/companion/chat",
@@ -18,7 +20,8 @@ def test_chat_endpoint_returns_local_companion_response_without_provider_key() -
     assert body["reply"]
 
 
-def test_chat_endpoint_returns_a_grocery_mission_and_no_execution_claim() -> None:
+def test_chat_endpoint_returns_a_grocery_mission_and_no_execution_claim(monkeypatch) -> None:
+    monkeypatch.setattr(companion_api.settings, "groq_api_key", None)
     with TestClient(app) as client:
         response = client.post(
             "/api/v1/companion/chat",
@@ -32,7 +35,8 @@ def test_chat_endpoint_returns_a_grocery_mission_and_no_execution_claim() -> Non
     assert "No external action was executed" in body["safety_note"]
 
 
-def test_chat_endpoint_rejects_blank_messages() -> None:
+def test_chat_endpoint_rejects_blank_messages(monkeypatch) -> None:
+    monkeypatch.setattr(companion_api.settings, "groq_api_key", None)
     with TestClient(app) as client:
         response = client.post("/api/v1/companion/chat", json={"message": "   "})
 
