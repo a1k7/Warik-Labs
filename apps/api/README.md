@@ -8,6 +8,8 @@ From the repository root:
 
 ```bash
 docker compose up -d postgres redis
+
+The Compose database is available to your Mac on `localhost:5433`; inside the container network it remains on port `5432`.
 cd apps/api
 python3.13 -m venv .venv
 source .venv/bin/activate
