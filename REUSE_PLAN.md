@@ -66,3 +66,19 @@ Before any adapter is implemented, record:
 4. One irreversible action only after a proper sandbox, Gate and reconciliation tests exist.
 
 The exact action skills remain open pending your selection and provider-access confirmation. Blinkit, IRCTC, BBPS, live ride booking and grocery checkout are **not** assumed to offer an open consumer API simply because a website/app exists.
+
+
+---
+
+# Supplemental reuse notes from uploaded safety snapshots
+
+The `warik-ai-safety-backups(2).zip` contains additional work not visible in the selected GitHub workspace branch. Carry the following *design intent* forward where still relevant:
+
+1. **SSRF-resistant research fetcher:** the later safety snapshot validates DNS answers as public IPs, connects to a pinned address while retaining host/TLS validation, revalidates every redirect, bounds redirects and response bytes, checks HTML content types, and includes tests for localhost/private DNS, redirects, response-size limits and unsupported content types. Rebuild this as a carefully reviewed network-fetch primitive; do not transplant it without independent testing.
+2. **Evidence-rich research output:** the research-evidence snapshot adds source/retrieval metadata and makes retrieval failures and partial workflow outcomes visible to the user. Preserve evidence status and provenance in every tool result.
+3. **Intent routing:** universal-routing and freshness-routing snapshots add tests to keep ordinary knowledge questions and how-to explanations out of the action workflow planner, while preserving explicit action requests for capability planning.
+4. **Provider guards:** provider-guard snapshot is a reference for provider-aware selection/fallback and failure handling; new tool capability manifests should make allowed providers, scopes, modes, side effects and evidence requirements explicit.
+5. **Approval inbox:** snapshots include pending-confirmation listing and decline routes. Rebuild these around the single central Gate, one-time action-bound approvals, timeout-to-DENY and replay protection rather than adding another independent confirmation path.
+
+The uploaded safety ZIP includes multiple dated snapshots and some duplicate hashes. None of these archive tests were run during this audit. The GitHub workspace branch's current web-research tool did not include the later IP-pinned connection implementation; do not assume the safety archive changes are present in production.
+
