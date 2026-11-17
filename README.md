@@ -35,6 +35,8 @@ No live WhatsApp, LLM, browser, payment, travel or commerce integration is enabl
 docker compose up -d postgres redis
 ```
 
+Local PostgreSQL is published on `127.0.0.1:5433` (container port 5432) to avoid colliding with a PostgreSQL service already running on your Mac. The root `.env.example` uses this port.
+
 4. Install JavaScript dependencies:
 
 ```bash
