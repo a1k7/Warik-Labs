@@ -1,12 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import {
   ArrowDown,
-  ArrowUp,
   ArrowUpRight,
   AudioLines,
   Check,
-  CheckCircle2,
   Clock3,
   Command,
   Compass,
@@ -17,10 +16,7 @@ import {
   Send,
   ShieldCheck,
   Sparkles,
-  TrainFront,
-  Wallet,
   WandSparkles,
-  X,
   Zap,
 } from "lucide-react";
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
@@ -130,7 +126,6 @@ export default function HomePage() {
   const [messages, setMessages] = useState<ChatMessage[]>([initialMessage]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
-  const [provider, setProvider] = useState<"groq" | "local" | "unknown">("unknown");
   const [apiState, setApiState] = useState<"checking" | "online" | "offline">("checking");
   const [showScroll, setShowScroll] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -197,7 +192,6 @@ export default function HomePage() {
         timestamp: Date.now(),
       };
       setMessages((current) => [...current, assistantMessage]);
-      setProvider(data.provider === "groq" && data.provider_status === "connected" ? "groq" : "local");
       setApiState("online");
     } catch (error) {
       setApiState("offline");
@@ -226,17 +220,16 @@ export default function HomePage() {
 
   const newChat = () => {
     setMessages([{ ...initialMessage, id: crypto.randomUUID(), timestamp: Date.now() }]);
-    setProvider("unknown");
     inputRef.current?.focus();
   };
 
   return (
     <main className="companion-shell">
       <aside className="companion-sidebar">
-        <a className="brand-lockup" href="/" aria-label="Warik home">
+        <Link className="brand-lockup" href="/" aria-label="Warik home">
           <div className="brand-symbol">w<span>.</span></div>
           <div><strong>warik<span> labs</span></strong><small>PERSONAL COMPANION</small></div>
-        </a>
+        </Link>
 
         <button className="new-chat-button" onClick={newChat}><Plus size={16} /> New conversation</button>
 
@@ -283,7 +276,7 @@ export default function HomePage() {
                 <div className="welcome-orb"><div className="orb-ring ring-a" /><div className="orb-ring ring-b" /><div className="orb-letter">w<span>.</span></div><Sparkles className="orb-spark" size={17} /></div>
                 <div className="welcome-overline"><span className="welcome-line" /> A LITTLE MORE HUMAN. A LOT MORE HELPFUL.</div>
                 <h1>Good things happen<br />when <em>everything clicks.</em></h1>
-                <p>Tell me what's on your mind. I'll help connect the dots, make a plan, and keep the little things from slipping through.</p>
+                <p>Tell me what&apos;s on your mind. I&apos;ll help connect the dots, make a plan, and keep the little things from slipping through.</p>
                 <div className="starter-grid">
                   {starters.map((starter) => {
                     const Icon = starter.icon;
@@ -325,7 +318,7 @@ export default function HomePage() {
               <div className="followup-prompts">
                 <span>KEEP GOING</span>
                 <button onClick={() => setInput("Make the plan more specific")}>Make it more specific <ArrowUpRight size={12} /></button>
-                <button onClick={() => setInput("What do you need from me next?")}>What's next? <ArrowUpRight size={12} /></button>
+                <button onClick={() => setInput("What do you need from me next?")}>What&apos;s next? <ArrowUpRight size={12} /></button>
               </div>
             )}
           </div>
