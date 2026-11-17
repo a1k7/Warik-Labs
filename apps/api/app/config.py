@@ -1,4 +1,5 @@
 from functools import lru_cache
+
 from pydantic import SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -28,9 +29,23 @@ class Settings(BaseSettings):
         return [origin.strip() for origin in self.cors_origins.split(",") if origin.strip()]
 
     @model_validator(mode="after")
-    def enforce_production_secret(self) -> "Settings":
-        if self.app_env.lower() == "production" and not self.jwt_secret:
-            raise ValueError("JWT_SECRET must be configured in production.")
+    def enforce_production_security(self) -> "Settings":
+        if self.app_env.lower() != "production":
+            return self
+
+        secret = self.jwt_secret.get_secret_value() if self.jwt_secret else ""
+        if len(secret) < 64:
+            raise ValueError("Production JWT_SECRET must contain at least 64 characters.")
+
+        if "*" in self.cors_origin_list:
+            raise ValueError("Wildcard CORS origins are forbidden in production.")
+
+        if self.payments_enabled:
+            raise ValueError("Payments are disabled in this release.")
+
+        if self.live_browser_actions_enabled:
+            raise ValueError("Live browser actions are disabled in this release.")
+
         return self
 
 
