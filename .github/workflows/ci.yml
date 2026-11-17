@@ -11,8 +11,31 @@ permissions:
 
 jobs:
   api:
-    name: API lint and tests
+    name: API lint, migrations and tests
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: warik
+          POSTGRES_USER: warik
+          POSTGRES_PASSWORD: warik_dev_only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U warik -d warik"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 15
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 15
     defaults:
       run:
         working-directory: apps/api
@@ -33,6 +56,8 @@ jobs:
           pip install -e ".[dev]"
       - name: Ruff
         run: ruff check app tests
+      - name: Apply migrations
+        run: alembic upgrade head
       - name: Pytest
         run: pytest -q
 
