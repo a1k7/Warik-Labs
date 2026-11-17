@@ -196,3 +196,26 @@ Do not assume a key is safe because it is free, has a limited free quota, or is 
 3. Store secrets in a local ignored `.env.local` or a cloud secret manager. Never commit them, never place them in `VITE_*` variables, logs, screenshots, task records or model prompts.
 4. Keep old and new environments isolated. Use independent credentials for development, staging and production.
 5. Before any integration test, confirm that the credential is test/sandbox-scoped and that the specific test call is explicitly approved.
+
+
+## Additional archive credential detail
+
+The non-empty backup values were identified by field name only. The following names were present in the archived `backend-backup/.env`:
+
+| Variable | Archive observation | Service / next step |
+|---|---|---|
+| `GROQ_API_KEY` | Non-empty | Groq; revoke/rotate. |
+| `GNANI_API_KEY` | Non-empty | Gnani; revoke/rotate. |
+| `HASDATA_API_KEY` | Placeholder-shaped value | HasData; confirm it was never a real credential. |
+| `GEOAPIFY_API_KEY` | Non-empty | Geoapify; revoke/rotate. |
+| `IGNAV_API_KEY` | Non-empty | Provider identity not independently confirmed from the archive; identify the account, then revoke/rotate. |
+| `STAYAPI_KEY` | Non-empty | StayAPI; revoke/rotate. |
+| `VISTALINK_API_KEY` | Non-empty | Provider identity/entitlement not independently confirmed; identify the account, then revoke/rotate. |
+| `OLA_MAPS_API_KEY` | Non-empty | Ola Maps; revoke/rotate. |
+| `DUFFEL_API_KEY` | Non-empty | Duffel; revoke/rotate. |
+| `REEFAPI_KEY` | Non-empty | Reef provider; revoke/rotate. |
+
+The backup file also included non-secret model/feature configuration such as `LLM_PROVIDER`, `GROQ_MODEL`, `OLLAMA_MODEL`, `VOICE_ENABLED` and `GNANI_TTS_VOICE`.
+
+The standalone `backend-backup/token.json` had a non-empty `access_token` field. The issuer cannot be proven from the file alone. Treat it as a bearer credential until its issuer has been identified and it has been revoked.
+
