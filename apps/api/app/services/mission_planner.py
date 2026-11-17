@@ -183,9 +183,15 @@ def local_reply(text: str, mission: MissionPlan | None) -> str:
             "I won't place an order, make a booking or spend money."
         )
 
-    if mission.intent in {"daily_plan", "reminder", "travel_planning"}:
+    if mission.intent == "travel_planning":
         return (
-            f"I've structured this as **{mission.title.lower()}**. We can work through the details here. "
+            f"I've shaped this into {mission.title.lower()}. I can organise the itinerary, budget and trip priorities. "
+            "Live fares and hotel availability are not connected yet, so I won't invent quotes or claim anything is booked."
+        )
+
+    if mission.intent in {"daily_plan", "reminder"}:
+        return (
+            f"I've structured this as {mission.title.lower()}. We can work through the details here. "
             "This build can draft and organise the plan, but it does not yet send notifications or change your calendar."
         )
 
