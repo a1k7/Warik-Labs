@@ -1,0 +1,50 @@
+# Secrets — never commit local or production credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+.secret/
+credentials/
+token.json
+
+# Node / pnpm
+node_modules/
+.pnpm-store/
+.next/
+.turbo/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+*.egg-info/
+htmlcov/
+.coverage
+
+# Local databases, queues and runtime data
+*.db
+*.sqlite
+*.sqlite3
+data/
+runtime/
+logs/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json
