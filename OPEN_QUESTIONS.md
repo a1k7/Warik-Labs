@@ -129,3 +129,30 @@ Before committing to AWS, confirm whether the account is eligible for the Free p
 
 The decisions above resolve the original architecture questions, but they do **not** constitute an explicit implementation approval. Phase 1 remains blocked until you say **“Approve Phase 1”** after addressing the exposed credentials and confirming the AWS account's no-cost eligibility (or choosing local-first).
 
+
+
+---
+
+# Phase 1 authorization and implementation record
+
+**Owner response:** On 2026-11-17 the owner said, "created the new jwt keys move ahead if you want something we have vscode terminal as well where i cloned repo." This is treated as explicit authorization to begin Phase 1. It does not authorize use of any previously exposed credential or live provider operation.
+
+**Phase 1 branch:** `phase-1/scaffold`
+
+**Implemented foundation:**
+- pnpm + Turborepo monorepo.
+- Next.js App Router dashboard shell with Mission Control framing.
+- FastAPI service with liveness and dependency-readiness endpoints.
+- SQLAlchemy models and initial Alembic schema for users, tasks, actions, approvals, memories, integrations and ledger events.
+- Local PostgreSQL and Redis Docker Compose services.
+- Local-only environment templates and secret ignore rules.
+- Python lint/tests plus Next.js lint/typecheck/build in GitHub Actions.
+- Approval-token generation and SHA-256 verification helpers.
+
+**Verification:** GitHub Actions run for scaffold head `9a2a3f7844b62534387daaa11f1231ca839928f1` completed successfully. Both the console and API jobs passed, including Postgres migration and Redis/database readiness checks. Subsequent documentation-only commit(s) will trigger the same workflow again.
+
+**Still not implemented:** WhatsApp integration, task intake, central Gate enforcement, browser control/sandbox, Markdown memory service, scheduler, vault provider, skills, user consent/deletion endpoints and full observability.
+
+**Credential handling:** The newly generated JWT value was not shared in chat or copied into GitHub. Store it locally in the ignored root `.env.local`; local development currently does not require a JWT secret. A production runtime will refuse to start without a value of at least 64 characters. Exposed legacy values must be rotated and must not be reused.
+
+Phase 1 is in progress on the review branch. The branch is not merged into `main`.
