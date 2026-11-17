@@ -4,6 +4,12 @@
 
 The primary user surface is planned to be WhatsApp. The web console is the owner's Mission Control for approvals, mission state, memory, integrations and audit evidence.
 
+## Current companion MVP
+
+The current branch adds the Warik chat endpoint and a responsive chat-first console. The companion classifies intents, drafts mission plans for travel/grocery/food/cab/reminders/daily planning/research, asks for missing details, and labels unavailable integrations. An optional Groq key enables hosted reasoning; without one, deterministic local responses remain available. Chat history is stored in the browser's local storage in this demo.
+
+This is not yet an autonomous agent: no WhatsApp, browser automation, merchant API, calendar, payment or external side-effect tool is connected. The backend chat route is intended for local development and must be protected by authentication and rate limiting before public deployment.
+
 ## Phase 1 scaffold
 
 This branch introduces the monorepo foundation:
