@@ -125,3 +125,55 @@ The old repository offers reusable domain patterns, but does not implement the d
 ## 7. Audit conclusion
 
 The reference repository is a useful source of product-domain knowledge and tested agent workflow patterns. It is not a ready-made foundation for the requested Instinct-like product. The new application must add the messaging channel, browser execution/sandbox, durable memory architecture, central gate, scheduler, vault, and complete audit/observability layer as first-class systems. The empty target repository is suitable for that clean implementation.
+
+
+---
+
+# Supplemental findings from uploaded local source and safety-backup archives
+
+**Updated:** 2026-11-17
+
+## Local project archive
+
+The uploaded `warik-ai.zip` is much broader than the clean GitHub working tree: it contains approximately 102,319 ZIP entries (about 799 MB uncompressed), including Python virtual environments, Node dependency trees, compiled assets, nested ZIP exports, backups, ignored environment files and a local `.git` directory. It must **not** be copied or extracted wholesale into Warik-Labs. It is useful only as a source of selected source files and history to inspect.
+
+The archive includes:
+- Current `backend/` and `frontend/` trees.
+- Old frontend/backend ZIP exports and a sanitized operator-phase backup.
+- `backend-backup/` and `backend-backup-operator-phase1/` snapshots.
+- `backend-backup/.env`, `backend/.env` and a backup `token.json`.
+- Multiple `.venv` and `node_modules` trees.
+
+The two separate ZIPs do not represent one clean immutable source revision. Use the selected GitHub workspace branch as the conceptual baseline, then compare individual changes deliberately.
+
+## Safety-backup archive: uncommitted work worth preserving conceptually
+
+The uploaded `warik-ai-safety-backups(2).zip` contains dated snapshots from 2026-11-15, including:
+
+| Snapshot | Files present | Conceptual value |
+|---|---|---|
+| `provider-guard-20261115-221124` | Orchestrator snapshot | Provider-selection and fallback guard work; inspect its assumptions and tests before adapting. |
+| `universal-routing-20261115-221004` | Orchestrator snapshot | Separating ordinary conversation from explicit action/workflow requests. |
+| `freshness-routing-20261115-221631` | Orchestrator + tests | Tests that general questions and how-to questions should not be misrouted into action planning. |
+| `research-evidence-20261115-222500` | Web research, orchestrator and tests | Distinguishes successful research evidence, retrieval failures, workflow status and partial completion metadata. |
+| `dns-pinning-corrected-20261115-223825` | Web research + tests | Adds public-address validation, IP-pinned HTTP(S) connections, redirect revalidation, response-size/content-type controls and SSRF-focused tests. |
+| `web-research-error-normalization-20261115-222842` | Web research snapshot | Normalizes retrieval errors rather than leaking arbitrary low-level failures into user-facing results. |
+| `dependency-cleanup-20261115-224101` | requirements + hardened web research | Adds/adjusts HTTP transport dependencies and a more complete bounded retrieval implementation. |
+| `approval-backend-20261115-194836` / `approval-route-20261115-215838` | Backend snapshots / conversations route | Pending-confirmation list and decline route snapshots, in addition to existing confirmation service code. |
+
+The DNS-pinning snapshots dated 22:35, 22:36 and 22:38 contain identical source hashes for the inspected `web_research.py` and test file; treat them as duplicate snapshots rather than three independent implementations.
+
+**Important branch comparison:** the inspected `backend/app/tools/web_research.py` in GitHub `main` and both advanced November 16 branches did not contain the pinned-connection implementation from the safety archive. The archive therefore contains useful unmerged/uncommitted security work. It must be reviewed and reimplemented or independently tested in the new project; do not assume it is already deployed in the old Render service.
+
+Static review only was performed on these safety snapshots. Their tests were not executed. This is not a security certification.
+
+## Updated risk assessment
+
+- A URL fetcher must protect against SSRF, DNS rebinding, unsafe redirects, oversized bodies, unexpected content types and private/link-local/multicast/reserved addresses. URL validation alone is not equivalent to connection pinning.
+- The browser worker requires stricter controls than a basic web research fetcher: per-tenant session isolation, strict domain allowlists, navigation and download policy, proxy/network egress controls, and audit events.
+- The old confirmation and workflow tests are useful examples, but the new Gate must protect every side effect—including browser clicks that send, purchase, submit, transfer or book.
+- None of the archive snapshots should be represented as tested in this audit.
+
+## Supplied Render service
+
+The user supplied `https://warik-ai-backend.onrender.com` as the old backend endpoint. An unauthenticated browser-based request to `/api/health` could not be retrieved by the available web reader. This does not establish that the service is down or up. No protected endpoint, live provider integration or database operation was called, and no old credential was used.
