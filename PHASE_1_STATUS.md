@@ -109,3 +109,36 @@ Open `http://localhost:3000`. API docs are at `http://localhost:8000/docs`; live
 7. Only then: read-only/approved skill adapters and operational dashboard features.
 
 The scaffold is not yet a production-ready autonomous agent. The CI pass validates the foundation, not live integration behavior or a security certification.
+
+
+---
+
+## Companion MVP increment — 2026-11-17
+
+The Phase 1 branch now includes the first usable Warik companion loop:
+
+- Chat-first, responsive Mission Companion UI with a new-conversation action, starter prompts, typing state and local browser-session history.
+- `POST /api/v1/companion/chat` with validated message/history schemas.
+- Deterministic intent routing for flight search, India travel planning, groceries, food, cab journeys, reminders, daily organisation and research.
+- Structured mission plans with steps, missing information, blocked capabilities and irreversible-action labels.
+- Optional server-side Groq chat completion; local deterministic responses remain available when no fresh key is configured.
+- Groq tests are forced offline and do not make provider calls.
+- The dashboard does not imply WhatsApp, merchant, browser, travel, calendar or payment integrations are connected.
+
+### Latest verification
+
+GitHub Actions run `44120496185` completed successfully:
+- Console: ESLint, TypeScript typecheck and Next.js build.
+- API: Ruff, Alembic migration against PostgreSQL, and pytest.
+
+[Open successful CI run](https://github.com/a1k7/Warik-Labs/actions/runs/44120496185).
+
+### Run the companion locally
+
+Pull `phase-1/scaffold`, update the API environment, reinstall the API package (HTTPX is now a runtime dependency), restart FastAPI and run the console through pnpm. See the owner handoff in the latest conversation for exact commands.
+
+### Honest product boundary
+
+This is a **local companion MVP**, not yet a production-ready autonomous personal assistant. Hosted reasoning requires a newly rotated Groq key stored only in the root ignored `.env.local`. Without that key the local deterministic planner works, but it is not equivalent to a large language model.
+
+No WhatsApp webhook, persistent cross-device conversation store, authenticated multi-user access, provider skill, live browser worker, reminder scheduler, payment or real-world side effect is connected. Public deployment remains blocked until authentication, rate limiting, privacy/consent/deletion, central approval-gate enforcement, secret management and production observability are implemented.
