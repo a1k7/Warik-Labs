@@ -71,6 +71,15 @@ const initialMessage: ChatMessage = {
   timestamp: Date.now(),
 };
 
+function renderAssistantText(content: string) {
+  return content.split(/(\\*\\*[^*]+\\*\\*)/g).map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={index}>{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+}
+
 function timeLabel(timestamp: number) {
   return new Date(timestamp).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
 }
@@ -296,7 +305,7 @@ export default function HomePage() {
                     {message.role === "assistant" && message.provider === "groq" && <span className="reasoning-chip"><Sparkles size={10} /> GROQ REASONING</span>}
                     {message.role === "assistant" && message.provider_status === "not_configured" && <span className="reasoning-chip local-chip">LOCAL MODE</span>}
                   </div>
-                  <div className="message-text">{message.content}</div>
+                  <div className="message-text">{message.role === "assistant" ? renderAssistantText(message.content) : message.content}</div>
                   {message.mission && <MissionCard mission={message.mission} />}
                 </div>
               </article>
