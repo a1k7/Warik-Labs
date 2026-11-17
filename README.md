@@ -26,8 +26,9 @@ No live WhatsApp, LLM, browser, payment, travel or commerce integration is enabl
 
 ## Local setup
 
-1. Copy `.env.example` to `.env.local` in the repository root.
-2. Keep all real credentials in local ignored files or a secret manager. Do not commit them.
+1. Copy the root `.env.example` to `.env.local` in the repository root for the API.
+2. Copy `apps/console/.env.example` to `apps/console/.env.local` for the browser-visible API base URL.
+3. Keep all real credentials in local ignored files or a secret manager. Do not commit them.
 3. Start local infrastructure:
 
 ```bash
