@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379/0"
     cors_origins: str = "http://localhost:3000"
     jwt_secret: SecretStr | None = None
+    groq_api_key: SecretStr | None = None
+    groq_model: str = "openai/gpt-oss-120b"
     whatsapp_enabled: bool = False
     payments_enabled: bool = False
     live_browser_actions_enabled: bool = False
