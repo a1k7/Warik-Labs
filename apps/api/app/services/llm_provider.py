@@ -3,7 +3,6 @@ import httpx
 from app.config import settings
 from app.schemas.companion import ConversationTurn
 
-
 SYSTEM_PROMPT = """You are Warik, an India-first personal AI companion.
 Be warm, sharp, practical and proactive. Understand English, Hinglish and Indian context.
 Help the user make progress: identify the real goal, constraints, missing information and a sensible next step.
