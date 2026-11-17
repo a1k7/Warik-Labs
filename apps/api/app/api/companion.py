@@ -1,7 +1,7 @@
 import logging
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from app.config import settings
 from app.schemas.companion import CompanionChatRequest, CompanionChatResponse
